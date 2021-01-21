@@ -15,8 +15,10 @@ In the framework of approximate Reinforcement Learning, deep neural networks bro
 
 The choice of such an environment results from its particular difficulty towards model-free RL algorithms. Indeed, the reward is very sparse and exploration is a key ingredient to succeeding in such environment. Hence the relevance of evaluating the SUNRISE framework on this setting.
 
-The properties of the environment are:
+<img src="maze.png" 
+  alt="1"/>
 
+The properties of the environment are:
 
 * Composed of an Agent (yellow), a Goal (green), and Traps (blue).
 * The terminal states are the Goal and the Traps.
@@ -28,10 +30,20 @@ The experiments will be conducted using the default hyper-parameters stated by t
 
 We tried SUNRISE on Three different configurations: (SIZE,N_TRAPS) \in {(5,3),(7,5),(10,10)}.
 
-SUNRISE managed to find its way out throughout the maze in the three cases (with different training times though), the average reward is shown in Figure and Appendix.
+SUNRISE managed to find its way out throughout the maze in the three cases (with different training times though), the average reward is shown in Figure 2.
 
+<img src="maze_10_10_score.png" 
+  alt="1"/>
+  
+(this is a discrete control task, thus the reference algorithm used for comparison is RainbowDQN. RainbowDQN is a mix of many techniques that proved to upgrade DQN performance on common benchmarks, among these we list: Double Q-Learning, Dueling networks, Distributional DQN, and Noisy networks)
 
 The three configurations required respectively 10k, 10k, and 30k training iterations to solve the maze. It is also important to mention that training SUNRISE takes up to 3 or 4 times the time required for RainbowDQN.
 
 On the (SIZE = 7, N_TRAPS = 5) configuration, SUNRISE managed to find the shortest path to the goal state, an illustration is in figure.
 
+<img src="path.png" 
+  alt="1"/>
+  
+(left: SUNRISE, right: RainbowDQN)
+
+Please consult report.pdf for the project detailed report.
