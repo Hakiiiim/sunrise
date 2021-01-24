@@ -8,7 +8,7 @@ To change the maze size and/or the number of traps, please walk through *main.py
 
 Please notice that the number of traps chosen should be feasible with respect to the maze size. Indeed, the maze is assured to leave space for the agent to move between the traps (see *my_env.py* for implementation details).
 
-==============================================================================================================================================================================
+========================================================================================================================================================================================
 
 # SUNRISE: Maze Environment
 
