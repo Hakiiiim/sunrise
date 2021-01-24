@@ -1,6 +1,6 @@
-# The main file is: my_env.py
+# The main contribution is: my_env.py
 
-### To test or change maze settings
+# To test or change maze settings:
 
 You can run the file *my_env.py* to create a random maze and run (also render) a random walk through it.
 
