@@ -63,8 +63,8 @@ hashtable = dict()
 
 hashtable['seed'] = 123
 hashtable['target_update'] = 500
-hashtable['game'] = 'hero'
-hashtable['T_max'] = 5000
+hashtable['game'] = 'maze'
+hashtable['T_max'] = 10000
 hashtable['learn_start'] = 1600
 hashtable['memory_capacity'] = 500000
 hashtable['replay_frequency'] = 1
@@ -72,7 +72,7 @@ hashtable['multi_step'] = 20
 hashtable['architecture'] = 'data-efficient'
 hashtable['hidden_size'] = 256
 hashtable['learning_rate'] = 0.0001
-hashtable['evaluation_interval'] = 500
+hashtable['evaluation_interval'] = 2000
 
 args = Args(hashtable)
 
@@ -110,6 +110,8 @@ class Env():
         #There are 4 actions
         self.actions = dict([i, e] for i, e in zip(range(4), range(4)))
         
+        #If traps, goal, and start are NONE, then they are generated randomly
+        
         if goal == None:
             goal_x = np.random.randint(1,self.size) 
             goal_y = np.random.randint(1,self.size)
@@ -119,9 +121,10 @@ class Env():
         
         self.traps = []
         
-        dropped = []
+        dropped = [] #To store the blocked cells
         for i in range(-1,2):
             for j in range(-1,2):
+                #start by blocking the goal state and its neighbors
                 dropped.append((self.goal[0] + i -1)*self.size + self.goal[1] + j)
         
         count = 1
@@ -132,6 +135,8 @@ class Env():
             else:
                 x = traps[count-1][0]
                 y = traps[count-1][1]
+                
+            #Keep the trap if it doesnt belong to the blocked cells
             
             if (x-1)*size+y not in dropped:
                 count += 1
@@ -140,6 +145,7 @@ class Env():
                 
                 for i in range(-1,2):
                     for j in range(-1,2):
+                        #update the blocked cells with the new added traps and their neighbors
                         dropped.append((x + i - 1)*self.size + y + j)
                         
         cond = True
@@ -151,14 +157,17 @@ class Env():
                 self.init_x = start[0] 
                 self.init_y = start[1]
             
+            #same for the starting cell
             if (self.init_x - 1)*size + self.init_y not in dropped:
                 cond = False
                 
                 self.player = (self.init_x,self.init_y)
                 
+        #Initialize attributes
         self._get_state()
                 
     def _get_state(self):
+        #Generate maze image (current state)
         state = np.zeros((self.size, self.size, 3), dtype=np.uint8)
         state[self.goal[0]-1][self.goal[1]-1] = (0, 255, 0)
         for trap in self.traps:
@@ -172,6 +181,7 @@ class Env():
         
         grayscale = cv2.cvtColor(state, cv2.COLOR_BGR2GRAY)
         state = cv2.resize(grayscale, (84, 84), interpolation=cv2.INTER_LINEAR)
+        
         return torch.tensor(state, dtype=torch.float32, device=self.device).div_(255)
     
     def _reset_buffer(self):
@@ -189,6 +199,7 @@ class Env():
         return torch.stack(list(self.state_buffer), 0)
     
     def step(self,action):
+        #the reward and the terminal states are taken into consideration here
         reward = 0
         done = False
         if action == 0:
@@ -249,6 +260,8 @@ class Env():
         observation = self._get_state()
         self.state_buffer.append(observation)
         
+        #Check lifetime condition
+        
         self.tot_reward += reward
         
         if self.tot_reward < -100:
@@ -257,6 +270,7 @@ class Env():
         return torch.stack(list(self.state_buffer), 0), reward, done
     
     def render(self):
+        #render image
         state = self._get_state()
         cv2.imshow('screen', state.cpu().detach().numpy())
         cv2.waitKey(1) & 0xFF
@@ -280,7 +294,7 @@ class Env():
 
 ###############################################################################
 
-
+'''
 SIZE = 5
 
 NUM_TRAP = 2
@@ -310,7 +324,7 @@ for i in range(N):
     maze.render()
     time.sleep(1)
 maze.close()
-
+'''
 
              
                 
